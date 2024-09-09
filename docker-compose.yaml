@@ -1,0 +1,35 @@
+version: "3.9"
+name: achivx-prerender
+services:
+  mongodb:
+    hostname: mongodb
+    image: mongo:7.0
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping')"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+    ports:
+      - 27017:27017
+    command: mongod --bind_ip_all
+    volumes:
+      - mongodbdata:/data/db
+  prerender:
+    profiles: ["build"]
+    build:
+      context: .
+    environment:
+      - MONGODB_URI=mongodb://mongodb/achivx-prerender
+    ports:
+      - 50051:50051
+  prerender-prebuilt:
+    profiles: ["prebuilt"]
+    image: achivx/prerender:master
+    environment:
+      - MONGODB_URI=mongodb://mongodb/achivx-prerender
+    ports:
+      - 50051:50051
+
+volumes:
+  mongodbdata:
+    driver: local
