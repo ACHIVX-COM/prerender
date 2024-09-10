@@ -22,7 +22,5 @@ const prerenderCacheSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports.PrerenderCacheModel = mongoose.model(
-  "PrerenderCache",
-  prerenderCacheSchema
-);
+module.exports.definePrerenderCacheModel = (mongoose) =>
+  mongoose.model("PrerenderCache", prerenderCacheSchema);

@@ -1,46 +1,12 @@
 const httpStatus = require("statuses");
 
 /**
- * @typedef {Object} CacheUpsertRequest
- * @prop {{[string]: string}} headers
- * @prop {number} statusCode
- * @prop {string?} html
- */
-
-/**
- * @callback CacheUpsertCb
- * @param {string} url
- * @param {CacheUpsertRequest} req
- * @returns {Promise<void>}
- */
-
-/**
- * @typedef {Object} CacheReadResponse
- * @prop {{[string]: string}} headers
- * @prop {number} statusCode
- * @prop {string?} html
- * @prop {Date} updatedAt
- */
-
-/**
- * @callback CacheReadCallback
- * @param {string} url
- * @returns {Promise<CacheReadResponse?>}
- */
-
-/**
- * @typedef {Object} Cache
- * @prop {CacheUpsertCb} upsert
- * @prop {CacheReadCallback} get
- */
-
-/**
- * @param {Cache} cache 
+ * @param {import('./cache').PrerenderCache} cache
  * @returns {import('prerender').}
  */
 module.exports.cachePlugin = (cache) => {
   const requestReceived = async (req, res, next) => {
-    if (req.query.recache) {
+    if (req.get("X-AXPR-Force-Rerender") === "true") {
       next();
 
       return;
@@ -55,7 +21,8 @@ module.exports.cachePlugin = (cache) => {
       res.setHeader("X-AXPR-Cached-Since", doc?.updatedAt?.toISOString?.());
 
       for (const [header, value] of Object.entries(doc.headers)) {
-        res.setHeader(header, value);
+        // Repeated headers are stored as a string separated by newlines.
+        res.setHeader(header, value.split(/[\n\r]+/));
       }
 
       let content;
@@ -74,7 +41,7 @@ module.exports.cachePlugin = (cache) => {
     }
   };
 
-  const beforeSend = async (req, res, next) => {
+  const beforeSend = async (req, _res, next) => {
     if (!req.prerender.cacheHit && req.prerender.statusCode < 500) {
       try {
         const html =
@@ -95,18 +62,18 @@ module.exports.cachePlugin = (cache) => {
     next();
   };
 
-  const pageLoaded = (req, res, next) => {
-    if (!req.prerender.content || req.prerender.renderType !== "html") {
-      next();
+  // const pageLoaded = (req, _res, next) => {
+  //   if (!req.prerender.content || req.prerender.renderType !== "html") {
+  //     next();
 
-      return;
-    }
-    next();
-  };
+  //     return;
+  //   }
+  //   next();
+  // };
 
   return {
     requestReceived,
     beforeSend,
-    pageLoaded,
+    // pageLoaded,
   };
 };

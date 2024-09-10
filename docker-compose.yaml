@@ -21,14 +21,14 @@ services:
     environment:
       - MONGODB_URI=mongodb://mongodb/achivx-prerender
     ports:
-      - 50051:50051
+      - 3000:3000
   prerender-prebuilt:
     profiles: ["prebuilt"]
     image: achivx/prerender:master
     environment:
       - MONGODB_URI=mongodb://mongodb/achivx-prerender
     ports:
-      - 50051:50051
+      - 3000:3000
 
 volumes:
   mongodbdata:
