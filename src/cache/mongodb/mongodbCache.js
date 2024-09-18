@@ -60,8 +60,15 @@ module.exports.MongodbPrerenderCache = class MongodbPrerenderCache extends (
           headers: page.headers ?? {},
         },
       },
-      { upsert: true }
+      { upsert: true },
     );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async delete(url) {
+    await this.#model.deleteOne({ url });
   }
 
   /**

@@ -34,6 +34,16 @@ module.exports.PrerenderCache = class PrerenderCache {
   }
 
   /**
+   * Delete a page from cache.
+   *
+   * @param {string} _url
+   * @returns {Promise<void>}
+   */
+  async delete(_url) {
+    throw new Error("not implemented");
+  }
+
+  /**
    * Close any connections held by this PrerenderCache instance.
    */
   async close() {}
