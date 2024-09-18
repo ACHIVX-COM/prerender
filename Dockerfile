@@ -8,6 +8,4 @@ RUN --mount=type=cache,uid=1000,gid=1000,target=/home/chrome/.npm \
 
 COPY ./src ./src
 
-ENV CHROME_LOCATION=/usr/bin/chromium-browser
-
 ENTRYPOINT ["npm", "run", "prerender"]

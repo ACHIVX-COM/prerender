@@ -35,9 +35,9 @@ const startServerWithCache = (module.startServerWithCache =
         "--disable-dev-shm-usage",
         "--remote-debugging-port=9222",
         "--hide-scrollbars",
-        "--no-sandbox",
+        ...(process.env.CHROME_SANDBOX === "true" ? [] : ["--no-sandbox"]),
       ],
-      chromeLocation: process.env.CHROME_LOCATION,
+      chromeLocation: process.env.CHROME_BIN,
       logRequests: process.env.PRERENDER_LOG_REQUESTS === "true",
     });
 
